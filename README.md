@@ -1,0 +1,2 @@
+## Otsuri Simulator
+おつりをシミュレーションする
