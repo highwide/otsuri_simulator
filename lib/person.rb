@@ -57,13 +57,15 @@ class Person
       if count_money > 0
         temp_wallet
           .each do |k, v|
+            temp_price = 0
             v.downto(1) do |i|
-              if k * i == count_money * m
+              if temp_price == 0 &&  k * i == count_money * m
                 using_money[k] = i
-                price -= count_money * m
+                temp_price = count_money * m
                 temp_wallet.delete(k)
               end
             end
+            price -= temp_price
           end
       end
       break if price == 0
