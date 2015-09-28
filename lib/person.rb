@@ -51,22 +51,21 @@ class Person
 
   def pay_precisely(price)
     using_money = {}
-    temp_wallet = @wallet.money.sort{|a, b| a[0] <=> b[0]}.to_h
+    tmp_wallet = @wallet.money.sort{|a, b| a[0] <=> b[0]}.to_h
     Wallet::MONEY_SET.each do |m|
       count_money = price / m
       if count_money > 0
-        temp_wallet
-          .each do |k, v|
-            temp_price = 0
-            v.downto(1) do |i|
-              if temp_price == 0 &&  k * i == count_money * m
-                using_money[k] = i
-                temp_price = count_money * m
-                temp_wallet.delete(k)
-              end
+        tmp_wallet.each do |k, v|
+          tmp_price = 0
+          v.downto(1) do |i|
+            if tmp_price == 0 && k * i == count_money * m
+              using_money[k] = i
+              tmp_price = count_money * m
+              tmp_wallet.delete(k)
             end
-            price -= temp_price
           end
+          price -= tmp_price
+        end
       end
       break if price == 0
     end
