@@ -1,4 +1,5 @@
-require './lib/wallet.rb'
+require './lib/wallet'
+require './lib/money'
 
 class Person
   attr_accessor :wallet, :coins_history
@@ -18,6 +19,10 @@ class Person
     @coins_history = []
   end
 
+  def decide
+    # 継承先で定義する
+  end
+
   def do_shopping
     while
       buying_price = rand(4000)
@@ -30,45 +35,20 @@ class Person
   def buy(price)
     using_money = decide(price)
     @wallet.withdraw!(using_money)
-    change = using_money.inject(0) {|sum, (yen, num)| sum + (yen * num)} - price
-    recieve_change(change)
-  end
-
-  def recieve_change(price)
-    change = {}
-    Wallet::MONEY_SET.each do |m|
-      count_money = price / m
-      change[m] = count_money
-      price -= count_money * m
-      break if price == 0
-    end
+    change = Money.smallest_new(using_money.amount_yen - price)
     @wallet.deposit!(change)
   end
 
   def average_having_coins
-    @coins_history.inject {|sum, coins| sum + coins} / @coins_history.length
+    @coins_history.inject(:+) / @coins_history.length
   end
 
-  def pay_precisely(price)
-    using_money = {}
-    tmp_wallet = @wallet.money.sort{|a, b| a[0] <=> b[0]}.to_h
-    Wallet::MONEY_SET.each do |m|
-      count_money = price / m
-      if count_money > 0
-        tmp_wallet.each do |k, v|
-          tmp_price = 0
-          v.downto(1) do |i|
-            if tmp_price == 0 && k * i == count_money * m
-              using_money[k] = i
-              tmp_price = count_money * m
-              tmp_wallet.delete(k)
-            end
-          end
-          price -= tmp_price
-        end
-      end
-      break if price == 0
+  def pay_precisely? (price)
+    Money::VALUES.each do |v|
+      return true if price == 0
+      return false if price < 0
+
+      price -= (v * Wallet.money[v])
     end
-    using_money.empty? ? false : using_money
   end
 end
