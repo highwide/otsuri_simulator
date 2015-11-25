@@ -43,12 +43,34 @@ class Person
     @coins_history.inject(:+) / @coins_history.length
   end
 
-  def pay_precisely? (price)
+  def precise_money(price)
+    init_ary = []
+    Money::VALUES.each do |v|
+      break if price == 0
+      tmp = price / v
+      init_ary[v] = [tmp, @wallet.money.body[v]].min
+      price -= init_ary[v] * v
+    end
+
+    Money.new(
+                one: init_ary[1],
+               five: init_ary[5],
+                ten: init_ary[10],
+              fifty: init_ary[50],
+            hundred: init_ary[100],
+       five_hundred: init_ary[500],
+           thousand: init_ary[1000],
+      five_thousand: init_ary[5000],
+       ten_thousand: init_ary[10000]
+    )
+  end
+
+  def pay_precisely?(price)
     Money::VALUES.each do |v|
       return true if price == 0
-      return false if price < 0
-
-      price -= (v * Wallet.money[v])
+      tmp = price / v || binding.pry
+      price -= [tmp, @wallet.money.body[v]].min * v
     end
+    !!(price == 0)
   end
 end

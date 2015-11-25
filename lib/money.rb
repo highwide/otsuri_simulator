@@ -6,15 +6,15 @@ class Money
   def initialize(one: 0, five: 0, ten: 0, fifty: 0, hundred: 0,
     five_hundred: 0, thousand: 0, five_thousand: 0, ten_thousand: 0)
     @body = {
-      10000 => ten_thousand,
-      5000  => five_thousand,
-      1000  => thousand,
-      500   => five_hundred,
-      100   => hundred,
-      50    => fifty,
-      10    => ten,
-      5     => five,
-      1     => one
+      10000 => ten_thousand || 0,
+      5000  => five_thousand || 0,
+      1000  => thousand || 0,
+      500   => five_hundred || 0,
+      100   => hundred || 0,
+      50    => fifty || 0,
+      10    => ten || 0,
+      5     => five || 0,
+      1     => one || 0
     }
   end
 
@@ -50,29 +50,29 @@ class Money
 
   def add(mny)
     Money.new(
-                one: @money[1]     + mny[1],
-               five: @money[5]     + mny[5],
-                ten: @money[10]    + mny[10],
-              fifty: @money[50]    + mny[50],
-            hundred: @money[100]   + mny[100],
-       five_hundred: @money[500]   + mny[500],
-           thousand: @money[1000]  + mny[1000],
-      five_thousand: @money[5000]  + mny[5000],
-       ten_thousand: @money[10000] + mny[10000]
+                one: @body[1]     + mny.body[1],
+               five: @body[5]     + mny.body[5],
+                ten: @body[10]    + mny.body[10],
+              fifty: @body[50]    + mny.body[50],
+            hundred: @body[100]   + mny.body[100],
+       five_hundred: @body[500]   + mny.body[500],
+           thousand: @body[1000]  + mny.body[1000],
+      five_thousand: @body[5000]  + mny.body[5000],
+       ten_thousand: @body[10000] + mny.body[10000]
     )
   end
 
   def sub(mny)
     sub_mny = {
-                one: @money[1]     - mny[1],
-               five: @money[5]     - mny[5],
-                ten: @money[10]    - mny[10],
-              fifty: @money[50]    - mny[50],
-            hundred: @money[100]   - mny[100],
-       five_hundred: @money[500]   - mny[500],
-           thousand: @money[1000]  - mny[1000],
-      five_thousand: @money[5000]  - mny[5000],
-       ten_thousand: @money[10000] - mny[10000]
+                one: @body[1]     - mny.body[1],
+               five: @body[5]     - mny.body[5],
+                ten: @body[10]    - mny.body[10],
+              fifty: @body[50]    - mny.body[50],
+            hundred: @body[100]   - mny.body[100],
+       five_hundred: @body[500]   - mny.body[500],
+           thousand: @body[1000]  - mny.body[1000],
+      five_thousand: @body[5000]  - mny.body[5000],
+       ten_thousand: @body[10000] - mny.body[10000]
     }
 
     exception("Over using money") if sub_mny.values.any? {|m| m < 0 }
