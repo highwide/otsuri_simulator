@@ -2,13 +2,29 @@ require 'bundler'
 Bundler.require
 
 require './lib/lazy_person.rb'
+require './lib/normal_person.rb'
+require './lib/rational_person.rb'
 
-ave = []
-10000.times do 
-  person = LazyPerson.new
-  person.do_shopping
-  ave << person.coins_history.inject{|sum, item| sum + item}.to_f / person.coins_history.length.to_f
+def simulate_person(character)
+  ave = []
+
+  1000.times do 
+    case character
+    when "lazy"
+      person = LazyPerson.new
+    when "normal"
+      person = NormalPerson.new
+    when "rational"
+      person = RationalPerson.new
+    end
+
+    person.do_shopping
+    ave << person.coins_history.inject(:+).to_f / person.coins_history.length.to_f
+  end
+
+  puts "\n#{character}の平均: #{ave.inject(:+).to_f / ave.length.to_f}枚の硬貨"
 end
 
-puts ""
-puts "平均: #{ave.inject{|sum, item| sum + item}.to_f / ave.length.to_f}枚の硬貨"
+simulate_person "lazy"
+simulate_person "normal"
+# simulate_person "rational"
