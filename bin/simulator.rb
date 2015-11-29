@@ -27,4 +27,4 @@ end
 
 simulate_person "lazy"
 simulate_person "normal"
-# simulate_person "rational"
+simulate_person "rational"

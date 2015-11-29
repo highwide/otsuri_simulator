@@ -44,12 +44,12 @@ class Person
   end
 
   # ピッタリ払うお金の組み合わせ
-  def precise_money(price)
+  def precise_money(price, money = @wallet.money)
     init_ary = []
-    Money::VALUES.reverse.each do |v|
+    Money::VALUES.each do |v|
       break if price == 0
       tmp = price / v
-      init_ary[v] = [tmp, @wallet.money.body[v]].min
+      init_ary[v] = [tmp, money.body[v]].min
       price -= init_ary[v] * v
     end
 
@@ -67,24 +67,25 @@ class Person
   end
 
   # 手持ちでピッタリ払えるか？
-  def pay_precisely?(price)
-    Money::VALUES.reverse.each do |v|
+  def pay_precisely?(price, money = @wallet.money)
+    Money::VALUES.each do |v|
       return true if price == 0
-      tmp = price / v || binding.pry
-      price -= [tmp, @wallet.money.body[v]].min * v
+      tmp = price / v
+      price -= [tmp, money.body[v]].min * v
     end
     !!(price == 0)
   end
 
-  # ピッタリ払えないときにお金ごとに切り上げる
+  # ピッタリ払えないときにお金の単位ごとに切り上げる
   # ex: 8484円 -> 8485円 -> 8490円 -> 8500円 -> 9000円 -> 10000円
   def round_money_ary(price)
-    [5, 10, 50, 100, 500, 1000, 5000, 10000].map do |v|
+    tmp = [5, 10, 50, 100, 500, 1000, 5000, 10000].map do |v|
       if price % v == 0
         price
       else
         (price / v) * v + v
       end
     end
+    tmp.uniq
   end
 end

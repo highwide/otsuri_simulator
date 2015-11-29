@@ -75,7 +75,7 @@ class Money
        ten_thousand: @body[10000] - mny.body[10000]
     }
 
-    exception("Over using money") if sub_mny.values.any? {|m| m < 0 }
+    raise "Over using money : @body: #{@body}, mny: #{mny}" if sub_mny.values.any? {|m| m < 0 }
 
     Money.new(sub_mny)
   end
