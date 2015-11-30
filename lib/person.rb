@@ -34,6 +34,7 @@ class Person
 
   def buy(price)
     using_money = decide(price)
+    binding.pry if @wallet.money.amount_yen < using_money.amount_yen
     @wallet.withdraw!(using_money)
     change = Money.smallest_new(using_money.amount_yen - price)
     @wallet.deposit!(change)
@@ -46,14 +47,20 @@ class Person
   # ピッタリ払うお金の組み合わせ
   def precise_money(price, money = @wallet.money)
     init_ary = []
-    Money::VALUES.each do |v|
-      break if price == 0
-      tmp = price / v
-      init_ary[v] = [tmp, money.body[v]].min
+    motone = price
+    tmp = 0
+    Money::VALUES.reverse.each do |v|
+      break if price <= 0
+      init_ary[v] = [price / v, money.body[v]].min
+      init_ary[v] += 1 if (motone - tmp) <= v
+      tmp += init_ary[v] * v
       price -= init_ary[v] * v
     end
 
-    Money.new(
+    binding.pry if tmp < motone
+    diff = tmp - motone 
+
+    mny = Money.new(
                 one: init_ary[1],
                five: init_ary[5],
                 ten: init_ary[10],
@@ -64,14 +71,15 @@ class Person
       five_thousand: init_ary[5000],
        ten_thousand: init_ary[10000]
     )
+
+    mny.sub precise_money2(diff, mny)
   end
 
   # 手持ちでピッタリ払えるか？
   def pay_precisely?(price, money = @wallet.money)
     Money::VALUES.each do |v|
       return true if price == 0
-      tmp = price / v
-      price -= [tmp, money.body[v]].min * v
+      price -= [price / v, money.body[v]].min * v
     end
     !!(price == 0)
   end
@@ -87,5 +95,26 @@ class Person
       end
     end
     tmp.uniq
+  end
+
+  def precise_money2(price, mny)
+    init_ary = []
+    Money::VALUES.each do |v|
+      break if price == 0
+      init_ary[v] = [price / v, mny.body[v]].min
+      price -= init_ary[v] * v
+    end
+
+    Money.new(
+                one: init_ary[1],
+               five: init_ary[5],
+                ten: init_ary[10],
+              fifty: init_ary[50],
+            hundred: init_ary[100],
+       five_hundred: init_ary[500],
+           thousand: init_ary[1000],
+      five_thousand: init_ary[5000],
+       ten_thousand: init_ary[10000]
+    )
   end
 end

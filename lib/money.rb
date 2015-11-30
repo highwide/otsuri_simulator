@@ -74,8 +74,7 @@ class Money
       five_thousand: @body[5000]  - mny.body[5000],
        ten_thousand: @body[10000] - mny.body[10000]
     }
-
-    raise "Over using money : @body: #{@body}, mny: #{mny}" if sub_mny.values.any? {|m| m < 0 }
+    raise "Over using money : @body: #{@body}, mny: #{mny.body}" if mny.values.any? {|m| m < 0 }
 
     Money.new(sub_mny)
   end

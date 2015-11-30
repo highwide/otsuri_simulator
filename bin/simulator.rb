@@ -8,7 +8,7 @@ require './lib/rational_person.rb'
 def simulate_person(character)
   ave = []
 
-  10000.times do 
+  1000.times do 
     case character
     when "lazy"
       person = LazyPerson.new
